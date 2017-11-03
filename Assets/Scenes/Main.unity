@@ -33816,7 +33816,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1385674139}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -194.62875, z: 0}
+  m_LocalPosition: {x: 0, y: -250.04985, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 502286262}
@@ -33846,8 +33846,11 @@ MonoBehaviour:
   submitKey: 13
   deleteKey: 8
   tickRate: 1
+  errorColor: {r: 1, g: 0, b: 0, a: 1}
+  helpColor: {r: 0, g: 0.78431374, b: 0, a: 1}
   invalidText: '*Invalid Command*'
-  invalidSyntax: 
+  invalidSyntax: '*Invalid Fields*'
+  commandsPerPage: 10
 --- !u!222 &1385674142
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33867,12 +33870,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allKeyWords:
   - keyString: clear
-    wordDescription: Clear Console
+    wordDescription: clear console
+    allParamInfo: []
     OnConsoleSubmit:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1385674141}
-          m_MethodName: Clear
+          m_MethodName: ClearConsole
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -33882,10 +33886,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-      m_TypeName: StringEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      m_TypeName: KeywordEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
   - keyString: help
-    wordDescription: Print all commands
+    wordDescription: print all commands
+    allParamInfo:
+    - paramDescription: page
+      dataType: 1
     OnConsoleSubmit:
       m_PersistentCalls:
         m_Calls:
@@ -33900,7 +33907,30 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-      m_TypeName: StringEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      m_TypeName: KeywordEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - keyString: move
+    wordDescription: print all commands
+    allParamInfo:
+    - paramDescription: direction
+      dataType: 0
+    - paramDescription: distance
+      dataType: 2
+    OnConsoleSubmit:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1885216881}
+          m_MethodName: Move
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: KeywordEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
 --- !u!1 &1386290437
 GameObject:
@@ -38937,8 +38967,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1600868494}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 633, y: 308, z: 0}
-  m_LocalScale: {x: 1.5825, y: 1.5825, z: 1.5825}
+  m_LocalPosition: {x: 501.5, y: 313.5, z: 0}
+  m_LocalScale: {x: 1.25375, y: 1.25375, z: 1.25375}
   m_Children:
   - {fileID: 1385674140}
   m_Father: {fileID: 0}
@@ -39316,7 +39346,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 106484640}
   m_HandleRect: {fileID: 106484639}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -46324,6 +46354,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1885216880}
   - component: {fileID: 1885216879}
+  - component: {fileID: 1885216881}
+  - component: {fileID: 1885216882}
   m_Layer: 0
   m_Name: Hero
   m_TagString: Untagged
@@ -46388,6 +46420,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1885216881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1885216878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10d184d23e36cf47bfaf0cf9917d08f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!50 &1885216882
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1885216878}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1900119927
 GameObject:
   m_ObjectHideFlags: 0

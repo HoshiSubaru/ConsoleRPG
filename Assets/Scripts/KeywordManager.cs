@@ -1,27 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-
-[System.Serializable]
-public class StringEvent : UnityEvent<string[]>{}
-
-[System.Serializable]
-public class Keyword
-{
-    public string keyString;
-    public string wordDescription;
-    
-    public StringEvent OnConsoleSubmit;
-}
-
-
 
 public class KeywordManager : MonoBehaviour
 {
     public static KeywordManager instance;
 
     [SerializeField] private List<Keyword> allKeyWords;
+
+    public List<Keyword> AllKeyWords
+    {
+        get { return allKeyWords; }
+    }
 
     private void Awake()
     {
@@ -41,7 +32,7 @@ public class KeywordManager : MonoBehaviour
                 }
             }
         }
-        keyWord = null;
+        keyWord = null; 
         return false;
     }
 

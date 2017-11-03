@@ -1,22 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Console : MonoBehaviour
 {
+    public static Console instance;
+
     [Header("Text Info")]
     [SerializeField] private Text consoleTextUI;
     [SerializeField][TextArea] private string consoleText;
     [SerializeField] private string consoleCommand;
 
-    [Header("Console Info")]
+    [Header("Console Keys")]
     [SerializeField] private KeyCode submitKey;
     [SerializeField] private KeyCode deleteKey;
 
-    [Space]
+    [Header("Console Info")]
     [SerializeField] private float tickRate = 1f;
     private float tickTime;
     private bool indicatorVisible;
@@ -24,8 +25,18 @@ public class Console : MonoBehaviour
     private char wordDelimeter = ' ';
 
     [Header("Console Commands")]
+    [SerializeField] private Color errorColor;
+    [SerializeField] private Color helpColor;
+
     [SerializeField] private string invalidText;
     [SerializeField] private string invalidSyntax;
+
+    [SerializeField] private int commandsPerPage = 1;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -46,11 +57,28 @@ public class Console : MonoBehaviour
 
                 if (commandWords.Length > 0 && KeywordManager.instance.CheckKeyword(commandWords[0], out keyWord))
                 {
-                    keyWord.OnConsoleSubmit.Invoke(commandWords);
+                    if(keyWord.CheckParameters(commandWords))
+                    {
+                        keyWord.OnConsoleSubmit.Invoke(commandWords);
+                    }
+                    else
+                    {
+                        string errorText = invalidSyntax + "\n" + keyWord.keyString;
+
+                        if (keyWord.allParamInfo.Count > 0)
+                        {
+                            foreach (Keyword.ParameterInfo info in keyWord.allParamInfo)
+                            {
+                                errorText += wordDelimeter + "<" + info.paramDescription + ">";
+                            }
+                        }
+
+                        PrintLine(ConsoleTextFunction.ColorText(errorText, errorColor));
+                    }
                 }
                 else
                 {
-                    consoleText += "\n" + invalidText;
+                    PrintLine(ConsoleTextFunction.ColorText(invalidText, errorColor));
                 }
                 consoleCommand = "";
 
@@ -87,12 +115,44 @@ public class Console : MonoBehaviour
 
     public void Help(string[] args)
     {
-        foreach (string arg in args)
-            Debug.Log(arg);
+        int pageNo = int.Parse(args[1]);
+
+        List<Keyword> allKeyWords = KeywordManager.instance.AllKeyWords;
+        int totalPages = (int) Math.Ceiling((allKeyWords.Count / (decimal)commandsPerPage));
+
+        PrintLine(ConsoleTextFunction.ColorText("---help command : page " + pageNo + " of " + totalPages + "---", helpColor));
+        
+        int curPageCommandNo = commandsPerPage * (1 - (pageNo / totalPages))
+            + (allKeyWords.Count - (commandsPerPage * (totalPages - 1))) * (pageNo / totalPages);
+        
+        for (int i = 0; i < curPageCommandNo; i++)
+        {
+            Keyword curKeyWord = allKeyWords[ ((pageNo - 1) * commandsPerPage) + i];
+            string paramText = curKeyWord.keyString;
+
+            if (curKeyWord.allParamInfo.Count > 0)
+            {
+                foreach (Keyword.ParameterInfo paramInfo in curKeyWord.allParamInfo)
+                {
+                    paramText += wordDelimeter + "<" + paramInfo.paramDescription + ">";
+                }
+            }
+            PrintLine(paramText + " |\t\t" + curKeyWord.wordDescription);
+        }
     }
 
-    public void Clear(string[] args)
+    public void ClearConsole(string[] args)
     {
+        consoleText = "";
+    }
 
+    public static void PrintLine(string text)
+    {
+        Console.instance.consoleText += "\n" + text;
+    }
+
+    public static void Print(string text)
+    {
+        Console.instance.consoleText += text;
     }
 }
